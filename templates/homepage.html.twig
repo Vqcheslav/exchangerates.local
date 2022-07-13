@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block container %}
+
+    <h1 class='display-6' style='margin-top: 2rem;'>Валютные курсы по данным банка России</h1>
+
+    <form action='/' method='get'>
+        <div class="input-group mb-3" style='margin-top: 2rem;'>
+            <span class="input-group-text" id="inputGroup-sizing-default">Введите дату</span>
+            <input type="date" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" name='date'>
+            <input class="btn btn-outline-secondary" type="submit" value='Отправить'>
+        </div>
+    </form>
+
+    {% if currencies %}
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Номер</th>
+                <th scope="col">Код</th>
+                <th scope="col">Наименование</th>
+                <th scope="col">Значение</th>
+                <th scope="col">Дата изменения</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for currency in currencies %}
+                <tr>
+                    <th scope="row">{{ currency.valuteId }}</th>
+                    <td>{{ currency.numCode }}</td>
+                    <td scope="row">{{ currency.charCode }}</td>
+                    <td>{{ currency.name }}</td>
+                    <td>{{ currency.value }}</td>
+                    <td>{{ currency.date|date('d/m/Y') }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <h6 style='margin-top: 6rem; text-align: center;'>Нет данных за указанную дату. Пожалуйста, введите верные данные</h6>
+        <a class='btn btn-primary btn-block' style='margin-top: 2rem; float: right;' href='/{{ dateToday }}'>
+            Показать курсы за сегодня
+        </a>
+    {% endif %}
+{% endblock %}

@@ -7,8 +7,8 @@
         <meta name="msapplication-tap-highlight" content="no" />
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
 
-        <title>{% block title %}Test App{% endblock %}</title>
-        <link rel="icon" href="{{ asset('favicon.ico') }}">
+        <title>{% block title %}Валютные курсы{% endblock %}</title>
+        <link rel="icon" href="{{ asset('favicon.png') }}">
 
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
@@ -18,29 +18,28 @@
         <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
                 <a class="navbar-brand" href="{{ path('homepage') }}">
-                    <img src="{{ asset('favicon.ico') }}" alt="" width="30" height="30" class="d-inline-block align-text-top">
-                    Тестовое приложение
+                    <img src="{{ asset('favicon.png') }}" alt="" width="30" height="30" class="d-inline-block align-text-top">
+                    Валютные курсы
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        {% if is_granted('ROLE_USER') %}
-                            <li class="nav-item">
-                                <a class="nav-link" aria-current="page" href="{{ path('logout') }}">Выйти</a>
-                            </li>
-                        {% else %}
-                            <li class="nav-item">
-                                <a class="nav-link" aria-current="page" href="{{ path('login') }}">Войти</a>
-                            </li>
-                        {% endif %}
-                        
                         <li class="nav-item">
                             {% if is_granted('ROLE_USER') %}
-                                <a class="nav-linк"  aria-current="page" href="{{ path('populateTheDb') }}">Заполнить базу данных</a>
+                                <a class="nav-link" aria-current="page" href="{{ path('logout') }}">Выйти</a>
                             {% else %}
-                                <a class="nav-linк disabled">Заполнить базу данных</a>
+                                <a class="nav-link" aria-current="page" href="{{ path('login') }}">Войти</a>
+                            {% endif %}
+                        </li>
+
+                        <li class="nav-item">
+                            {% if is_granted('ROLE_USER') %}
+                                <a class="nav-link" aria-current="page" href="{{ path('populateTheDb') }}">Заполнить базу данных</a>
+                            {% else %}
+                                <a class="nav-link disabled">Заполнить базу данных</a>
+                            {% endif %}
                         </li>
                     </ul>
                 </div>
@@ -50,14 +49,14 @@
         <div class="container" style="min-height: 100vh; max-width: 900px;">
             {% for label, messages in app.flashes %}
                 {% for message in messages %}
-                <div style='margin-top: -6vmin; padding-bottom: 2vmin;'>
+                <div style='margin-top: 6vmin; margin-bottom: 2vmin;'>
                     <p class='{{ label }}'>{{ message }}</p>
                 </div>
                 {% endfor %}
             {% endfor %}
 
             {% block container %}
-                <h1 class='display-1'>Это базовая страница</h1>
+                <h1 class='display-6' style='margin-top: 3rem;'>Это базовая страница</h1>
             {% endblock %}
         </div>
         
@@ -66,12 +65,12 @@
                 <ul class="nav justify-content-center border-bottom pb-3 mb-3">
                     <li class="nav-item"><a href="{{ path('homepage') }}" class="nav-link px-2 text-muted">На главную</a></li>
                     {% if is_granted('ROLE_USER') %}
-                        <li class="nav-item"><a href="{{ path('logout') }}" class="nav-link disabled px-2 text-muted">Выйти</a></li>
+                        <li class="nav-item"><a href="{{ path('logout') }}" class="nav-link px-2 text-muted">Выйти</a></li>
                     {% else %}
                         <li class="nav-item"><a href="{{ path('login') }}" class="nav-link px-2 text-muted">Войти</a></li>
                     {% endif %}
                 </ul>
-                <p class="text-center text-muted">&copy; 2022 Тестовое приложение</p>
+                <p class="text-center text-muted">&copy; 2022 Валютные курсы</p>
             </footer>
         </div>
     </body>

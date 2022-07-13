@@ -21,7 +21,7 @@ class CurrencyRepository extends ServiceEntityRepository
         parent::__construct($registry, Currency::class);
     }
 
-    public function add(Currency $entity, bool $flush = false): void
+    public function save(Currency $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -43,8 +43,30 @@ class CurrencyRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('c')
             ->orderBy('c.date', 'DESC')
+            ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult()
+        ;
+    }
+
+    public function endTransaction(): void
+    {
+        $this->getEntityManager()->flush();
+    }
+
+    /**
+     * @return Currency[] array of Currencies
+     */
+    public function getExchangeRatesByDate(int $timestamp): ?array
+    {
+        return $this->createQueryBuilder('c')
+            ->select('c')
+            ->where('c.date <= :timestamp')
+            ->orderBy('c.date', 'DESC')
+            ->setParameter('timestamp', $timestamp)
+            ->setMaxResults(34)
+            ->getQuery()
+            ->getResult()
         ;
     }
 

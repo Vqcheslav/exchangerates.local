@@ -36,16 +36,35 @@
     
 //     $dynamicXml = new \SimpleXMLElement($dynamicRawXml);
 
-//     var_dump($valute->attributes());
+//     // var_dump($valute->attributes());
     
-//     exit;
-//     // foreach ($dynamicXml->Record as $record) {
-//     //     $date = $record->attributes()['Date'];
-//     //     $value = $record->Value;
-//     //     echo $valute->attributes() . ' ' . $valute->NumCode . ' ' . $valute->CharCode . ' ' . iconv('UTF-8', 'Windows-1251', $valute->Name) . ' ' . $value . ' ' . strtotime($date)  . '
-//     //      ';
-//     // }
+//     // exit;
+
+//     foreach ($dynamicXml->Record as $record) {
+//         $date = $record->attributes()['Date'];
+//         $value = $record->Value;
+//         // echo $valute->attributes() . ' ' . $valute->NumCode . ' ' . $valute->CharCode . ' ' . iconv('UTF-8', 'Windows-1251', $valute->Name) . ' ' . $value . ' ' . strtotime($date)  . '
+//         //  ';
+
+
+//     }
 // }
 
-echo $date = (new \DateTime())->format('d/m/Y');
-echo $date2 = (new \DateTime('-1 month'))->format('d/m/Y');
+// echo $date = (new \DateTime())->format('d/m/Y');
+// echo $date2 = (new \DateTime('-1 month'))->format('d/m/Y');
+
+
+
+//echo sprintf('http://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=%s&date_req2=%s&VAL_NM_RQ=%s', '11/06/2022', '11/07/2022', 'R01010');
+
+
+
+// echo /* iconv('UTF-8', 'Windows-1251',  */'1 РђРІСЃС‚СЂР°Р»РёР№СЃРєРёР№ РґРѕР»Р»Р°СЂ'/* ) */;
+
+// echo strtotime('19.06.2022');
+$date = '19/06/2022';
+
+$dategg = explode('/', $date);
+
+echo $timestamp = mktime(0, 0, 0, $dategg[1], $dategg[0], $dategg[2]) . '   ';
+echo (new \DateTime($date))->format('d-m-Y');

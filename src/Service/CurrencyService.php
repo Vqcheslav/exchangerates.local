@@ -4,18 +4,26 @@ namespace App\Service;
 
 use App\Entity\Currency;
 use App\Repository\CurrencyRepository;
+use App\Service\XmlService;
 
 class CurrencyService
 {
     private CurrencyRepository $currencyRepository;
 
+    private XmlService $xmlService;
+
     public function __construct(
-        CurrencyRepository $currencyRepository
+        CurrencyRepository $currencyRepository,
+        XmlService $xmlService
     ) {
         $this->currencyRepository = $currencyRepository;
+        $this->xmlService = $xmlService;
     }
 
-    public function populateTheDb() 
+    /**
+     * @throws Exception
+     */
+    public function populateTheDb(): bool
     {
         $lastCurrency  = $this->currencyRepository->getLastCurrency();
         $lastSavedDate =  $lastCurrency ? date('d/m/Y', $lastCurrency->getDate()) : (new \DateTime('-1 month'))->format('d/m/Y');
@@ -25,30 +33,67 @@ class CurrencyService
             return false;
         }
 
-        $dailyRawXml = file_get_contents('http://www.cbr.ru/scripts/XML_daily.asp?date_req=' . $now);
-        $dailyXml    = new \SimpleXMLElement($dailyRawXml);
+        try {
+            $dailyRawXml = file_get_contents(sprintf('http://www.cbr.ru/scripts/XML_daily.asp?date_req=%s', $now));
+
+            if ($dailyRawXml === false) {
+                throw new \Exception('Неверный ответ сервера');
+            }
+
+            $dailyXml    = $this->xmlService->getXmlElement($dailyRawXml);
+        } catch (\Exception $e) {
+            throw $e;
+        }
 
         foreach ($dailyXml->Valute as $valute) {
-            $dynamicRawXml = file_get_contents(
-                sprintf('http://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=%s&date_req2=%s&VAL_NM_RQ=%s', $lastSavedDate, $now, $valute->attributes()['Id'])
-            );
-            $dynamicXml = new \SimpleXMLElement($dynamicRawXml);
+            $valuteId = (string) $valute->attributes()['ID'];
+
+            try {
+                $dynamicRawXml = file_get_contents(
+                    sprintf('http://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=%s&date_req2=%s&VAL_NM_RQ=%s', $lastSavedDate, $now, $valuteId)
+                );
+
+                if ($dynamicRawXml === false) {
+                    throw new \Exception('Неверный ответ сервера');
+                }
+
+                $dynamicXml = $this->xmlService->getXmlElement($dynamicRawXml);
+            } catch (\Exception $e) {
+                throw $e;
+            }
 
             foreach ($dynamicXml->Record as $record) {
                 $date     = $record->attributes()['Date'];
-                $value    = $record->Value;
+                $value    = (float) str_replace(',', '.', $record->Value);
                 $currency = new Currency();
                 $currency
-                    ->setValuteID($valute->attributes()['Id'])
-                    ->setNumCode($valute->NumCode)
-                    ->setCharCode($valute->CharCode)
-                    ->setName(iconv('UTF-8', 'Windows-1251', $valute->Name))
+                    ->setValuteID($valuteId)
+                    ->setNumCode((int) $valute->NumCode)
+                    ->setCharCode((string) $valute->CharCode)
+                    ->setName($valute->Nominal . ' ' . $valute->Name)
                     ->setValue($value)
-                    ->setDate(strtotime($date));
-                $this->currencyRepository->add($currency);
+                    ->setDate((int) strtotime($date));
+                $this->currencyRepository->save($currency);
             }
         }
 
+        $this->currencyRepository->endTransaction();
+
         return true;
+    }
+
+    public function getExchangeRatesByDate(string $date): ?array
+    {
+        $date = explode('-', $date);
+
+        $timestamp = mktime(0, 0, 0, $date[1], $date[2], $date[0]);
+
+        if ($timestamp === false || $timestamp > time()) {
+            return null;
+        }
+
+        $rates = $this->currencyRepository->getExchangeRatesByDate($timestamp);
+
+        return $rates;
     }
 }

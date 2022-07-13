@@ -3,15 +3,16 @@ version: '3'
 services:
 
     database:
+        container_name: exchangerates
         image: mysql:8
         ports:
-            - "33061:3306"
+            - "3306:3306"
         environment:
-            MYSQL_ROOT_USER: testapp
-            MYSQL_ROOT_PASSWORD: testapp
-            MYSQL_DATABASE: testapp
-            MYSQL_USER: testapp
-            MYSQL_PASSWORD: testapp
+            MYSQL_ROOT_USER: root
+            MYSQL_ROOT_PASSWORD: exchangerates
+            MYSQL_DATABASE: exchangerates
+            MYSQL_USER: exchange_user
+            MYSQL_PASSWORD: exchange_Pass
 
     mailer:
         image: schickling/mailcatcher

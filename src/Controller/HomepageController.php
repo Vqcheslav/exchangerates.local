@@ -37,11 +37,20 @@ class HomepageController extends AbstractController
     }
 
     #[Route('/', name: 'homepage')]
-    public function homepage(): Response
+    public function homepage(Request $request): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
+        $currencies = [];
+        $date = $request->query->get('date');
 
-        return $this->renderForm('base.html.twig');
+        if ($date !== null) {
+            $currencies = $this->currencyService->getExchangeRatesByDate($date);
+        }
+
+        return $this->render('homepage.html.twig', [
+            'currencies' => $currencies,
+            'dateToday'  => (new \DateTime())->format('d-m-Y'),
+        ]);
     }
 
     #[Route('/login', name: 'login')]
@@ -98,10 +107,14 @@ class HomepageController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
-        if ($this->currencyService->populateTheDb()) {
-            $this->addFlash('success', 'База данных обновлена');
-        } else {
-            $this->addFlash('success', 'База данных в актуальном состоянии');
+        try {
+            if ($this->currencyService->populateTheDb()) {
+                $this->addFlash('success', 'База данных обновлена');
+            } else {
+                $this->addFlash('success', 'База данных в актуальном состоянии');
+            }
+        } catch (\Exception $e) {
+            $this->addFlash('error', $e->getMessage());
         }
 
         return $this->redirectToRoute('homepage');
