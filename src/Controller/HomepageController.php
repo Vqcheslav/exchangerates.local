@@ -44,7 +44,7 @@ class HomepageController extends AbstractController
         $date = $request->query->get('date');
 
         if ($date !== null) {
-            $currencies = $this->currencyService->getExchangeRatesByDate($date);
+            $currencies = $this->currencyService->getCurrencyListByDate($date);
         }
 
         return $this->render('homepage.html.twig', [

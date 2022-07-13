@@ -9,7 +9,7 @@ class XmlService
         libxml_use_internal_errors(true);
         $doc = simplexml_load_string($xmlString);
 
-        if (!$doc) {
+        if (! $doc) {
             $errors = libxml_get_errors();
 
             if (count($errors)) {

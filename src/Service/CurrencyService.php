@@ -17,7 +17,7 @@ class CurrencyService
         XmlService $xmlService
     ) {
         $this->currencyRepository = $currencyRepository;
-        $this->xmlService = $xmlService;
+        $this->xmlService         = $xmlService;
     }
 
     /**
@@ -25,8 +25,10 @@ class CurrencyService
      */
     public function populateTheDb(): bool
     {
-        $lastCurrency  = $this->currencyRepository->getLastCurrency();
-        $lastSavedDate =  $lastCurrency ? date('d/m/Y', $lastCurrency->getDate()) : (new \DateTime('-1 month'))->format('d/m/Y');
+        $lastCurrency = $this
+            ->currencyRepository
+            ->getLastCurrency();
+        $lastSavedDate = $lastCurrency ? date('d/m/Y', $lastCurrency->getDate()) : (new \DateTime('-1 month'))->format('d/m/Y');
         $now           = (new \DateTime())->format('d/m/Y');
         
         if ($now === $lastSavedDate) {
@@ -50,14 +52,21 @@ class CurrencyService
 
             try {
                 $dynamicRawXml = file_get_contents(
-                    sprintf('http://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=%s&date_req2=%s&VAL_NM_RQ=%s', $lastSavedDate, $now, $valuteId)
+                    sprintf(
+                        'http://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=%s&date_req2=%s&VAL_NM_RQ=%s', 
+                        $lastSavedDate, 
+                        $now, 
+                        $valuteId
+                    )
                 );
 
                 if ($dynamicRawXml === false) {
                     throw new \Exception('Неверный ответ сервера');
                 }
 
-                $dynamicXml = $this->xmlService->getXmlElement($dynamicRawXml);
+                $dynamicXml = $this
+                    ->xmlService
+                    ->getXmlElement($dynamicRawXml);
             } catch (\Exception $e) {
                 throw $e;
             }
@@ -65,24 +74,25 @@ class CurrencyService
             foreach ($dynamicXml->Record as $record) {
                 $date     = $record->attributes()['Date'];
                 $value    = (float) str_replace(',', '.', $record->Value);
-                $currency = new Currency();
-                $currency
+                $currency = (new Currency())
                     ->setValuteID($valuteId)
-                    ->setNumCode((int) $valute->NumCode)
+                    ->setNumCode((string) $valute->NumCode)
                     ->setCharCode((string) $valute->CharCode)
                     ->setName($valute->Nominal . ' ' . $valute->Name)
                     ->setValue($value)
                     ->setDate((int) strtotime($date));
-                $this->currencyRepository->save($currency);
+                $this
+                    ->currencyRepository
+                    ->save($currency, false);
             }
         }
 
-        $this->currencyRepository->endTransaction();
+        $this->currencyRepository->flush();
 
         return true;
     }
 
-    public function getExchangeRatesByDate(string $date): ?array
+    public function getCurrencyListByDate(string $date): ?array
     {
         $timestamp = strtotime($date);
         
@@ -90,39 +100,14 @@ class CurrencyService
             return null;
         }
 
-        $rates = $this->currencyRepository->getExchangeRatesByDate($timestamp);
+        $rates = $this
+            ->currencyRepository
+            ->getCurrencyListByDate($timestamp);
 
         return $rates;
     }
 
-    public function save(string $valuteId, int $numCode, string $charCode, string $name, float $value, string $date): Currency
-    {
-        $currency = (new Currency)
-            ->setValuteID($valuteId)
-            ->setNumCode($numCode)
-            ->setCharCode($charCode)
-            ->setName($name)
-            ->setValue($value)
-            ->setDate(strtotime($date));
-        $this->currencyRepository->save($currency, true);
-
-        return $currency;
-    }
-
-    public function delete(int $id): bool
-    {
-        $currency = $this->currencyRepository->find($id);
-
-        if ($currency instanceof Currency){
-            $this->currencyRepository->remove($currency, true);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    public function getExchangeRatesByPeriod(string $dateFrom, string $dateTo, string $valuteId): ?array
+    public function getCurrencyListByPeriod(string $dateFrom, string $dateTo, string $valuteId): ?array
     {
         $timeFrom = strtotime($dateFrom);
         $timeTo   = strtotime($dateTo);
@@ -131,8 +116,106 @@ class CurrencyService
             return null;
         }
         
-        $rates = $this->currencyRepository->getExchangeRatesByPeriod($timeFrom, $timeTo, $valuteId);
+        $rates = $this
+            ->currencyRepository
+            ->getCurrencyListByPeriod($timeFrom, $timeTo, $valuteId);
 
         return $rates;
+    }
+
+    public function save(
+        string $valuteId, 
+        string $numCode, 
+        string $charCode, 
+        string $name, 
+        float $value, 
+        string $date
+    ): ?Currency {
+        if (! $this->checkArgsForCurrency($valuteId, $numCode, $charCode, $name, $value, $date)) {
+            return null;
+        }
+
+        $currency = (new Currency)
+            ->setValuteID($valuteId)
+            ->setNumCode($numCode)
+            ->setCharCode($charCode)
+            ->setName($name)
+            ->setValue($value)
+            ->setDate(strtotime($date));
+        $this
+            ->currencyRepository
+            ->save($currency);
+
+        return $currency;
+    }
+
+    public function update(
+        int $id,
+        string $valuteId, 
+        string $numCode, 
+        string $charCode, 
+        string $name, 
+        float $value, 
+        string $date
+    ) {
+        if (! $this->checkArgsForCurrency($valuteId, $numCode, $charCode, $name, $value, $date)) {
+            return null;
+        }
+
+        $currency = $this
+            ->currencyRepository
+            ->find($id);
+        
+        if (! ($currency instanceof Currency)) {
+            return null;
+        }
+
+        $currency
+            ->setValuteID($valuteId)
+            ->setNumCode($numCode)
+            ->setCharCode($charCode)
+            ->setName($name)
+            ->setValue($value)
+            ->setDate(strtotime($date));
+        $this
+            ->currencyRepository
+            ->save($currency);
+
+        return $currency;
+    }
+
+    public function delete(int $id): bool
+    {
+        $currency = $this
+            ->currencyRepository
+            ->find($id);
+
+        if ($currency instanceof Currency){
+            $this
+                ->currencyRepository
+                ->remove($currency);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private function checkArgsForCurrency(
+        string $valuteId, 
+        string $numCode, 
+        string $charCode, 
+        string $name, 
+        float $value, 
+        string $date
+    ) {
+        $reg         = '/(R\w{5,6})&(\d{3})&([[:alpha:]]+)&(\w+.+\w+)&(\d+\.\d+)&(\d{4}-\d{2}-\d{2})/';
+        $arrayOfArgs = [$valuteId, $numCode, $charCode, $name, $value, $date];
+
+        if (preg_match($reg, implode('&', $arrayOfArgs)) === 1) {
+            return true;
+        }
+
+        return false;
     }
 }

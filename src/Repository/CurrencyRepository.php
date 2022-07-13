@@ -21,60 +21,64 @@ class CurrencyRepository extends ServiceEntityRepository
         parent::__construct($registry, Currency::class);
     }
 
-    public function save(Currency $entity, bool $flush = false): void
+    public function save(Currency $entity, bool $flush = true): void
     {
         $this->getEntityManager()->persist($entity);
 
         if ($flush) {
-            $this->getEntityManager()->flush();
+            $this->flush();
         }
     }
 
-    public function remove(Currency $entity, bool $flush = false): void
+    public function remove(Currency $entity, bool $flush = true): void
     {
         $this->getEntityManager()->remove($entity);
 
         if ($flush) {
-            $this->getEntityManager()->flush();
+            $this->flush();
         }
     }
 
     public function getLastCurrency(): ?Currency
     {
-        return $this->createQueryBuilder('c')
+        return $this
+            ->createQueryBuilder('c')
             ->orderBy('c.date', 'DESC')
             ->setMaxResults(1)
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getOneOrNullResult();
     }
 
-    public function endTransaction(): void
+    public function flush(): void
     {
-        $this->getEntityManager()->flush();
+        $this
+            ->getEntityManager()
+            ->flush();
     }
 
     /**
      * @return Currency[] array of Currencies
      */
-    public function getExchangeRatesByDate(int $timestamp): ?array
+    public function getCurrencyListByDate(int $timestamp): ?array
     {
-        return $this->createQueryBuilder('c')
+        return $this
+            ->createQueryBuilder('c')
             ->where('c.date <= :timestamp')
             ->orderBy('c.date', 'DESC')
             ->setParameter('timestamp', $timestamp)
-            ->setMaxResults(34)
+            ->groupBy('c.charCode')
+            //->setMaxResults(34)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
 
     /**
      * @return Currency[] array of Currencies
      */
-    public function getExchangeRatesByPeriod(int $timeFrom, int $timeTo, string $valuteId): ?array
+    public function getCurrencyListByPeriod(int $timeFrom, int $timeTo, string $valuteId): ?array
     {
-        return $this->createQueryBuilder('c')
+        return $this
+            ->createQueryBuilder('c')
             ->where('c.valuteID = :valuteid')
             ->andWhere('c.date >= :timefrom')
             ->andWhere('c.date <= :timeto')
@@ -83,8 +87,7 @@ class CurrencyRepository extends ServiceEntityRepository
             ->setParameter(':timefrom', $timeFrom)
             ->setParameter(':timeto', $timeTo)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
 
 //    /**

@@ -25,10 +25,10 @@ class CurrencyController extends AbstractController
         $this->currencyNormalizer = $currencyNormalizer;
     }
 
-    #[Route('/daily/date={date<\d{4}-\d{2}-\d{2}>}', name: 'by_date')]
-    public function getExchangeRatesByDate(string $date): JsonResponse
+    #[Route('/daily/date={date<\d{4}-\d{2}-\d{2}>}', name: 'by_date', methods: ['GET'])]
+    public function getCurrencyListByDate(string $date): JsonResponse
     {
-        $currencies = $this->currencyService->getExchangeRatesByDate($date);
+        $currencies = $this->currencyService->getCurrencyListByDate($date);
 
         try {
             $currencies = $this->currencyNormalizer->normalizeArrayOfCurrencies($currencies, true);
@@ -39,10 +39,10 @@ class CurrencyController extends AbstractController
         return new JsonResponse($currencies);
     }
 
-    #[Route('/period/datefrom={dateFrom<\d{4}-\d{2}-\d{2}>}&dateto={dateTo<\d{4}-\d{2}-\d{2}>}&valuteid={valuteId<R\d{5}>}', name: 'by_period')]
-    public function getExchangeRatesByPeriod(string $dateFrom, string $dateTo, string $valuteId): JsonResponse
+    #[Route('/period/datefrom={dateFrom<\d{4}-\d{2}-\d{2}>}&dateto={dateTo<\d{4}-\d{2}-\d{2}>}&valuteid={valuteId<R\w{5,6}>}', name: 'by_period', methods: ['GET'])]
+    public function getCurrencyListByPeriod(string $dateFrom, string $dateTo, string $valuteId): JsonResponse
     {
-        $currencies = $this->currencyService->getExchangeRatesByPeriod($dateFrom, $dateTo, $valuteId);
+        $currencies = $this->currencyService->getCurrencyListByPeriod($dateFrom, $dateTo, $valuteId);
 
         try {
             $currencies = $this->currencyNormalizer->normalizeArrayOfCurrencies($currencies, true);
@@ -53,16 +53,17 @@ class CurrencyController extends AbstractController
         return new JsonResponse($currencies);
     }
 
-    #[Route('/set/valuteid={valuteId<R\d{5}>}&numcode={numCode<\d{3}>}&charcode={charCode<[[:alpha:]]+>}&name={name<\w+.+\w+>}&value={value<\d+\.\d+>}&date={date<\d{4}-\d{2}-\d{2}>}', name: 'set')]
-    public function setExchangeRate(
-        string $valuteId,
-        int $numCode,
-        string $charCode,
-        string $name,
-        float $value,
-        string $date
-    ): JsonResponse {
-        $currency = $this->currencyService->save($valuteId, $numCode, $charCode, $name, $value, $date);
+    #[Route('/set', name: 'set', methods: ['POST'])]
+    public function setCurrency(Request $request): JsonResponse 
+    {
+        $currency = $this->currencyService->save(
+            $request->request->get('valuteId'), 
+            $request->request->get('numCode'), 
+            $request->request->get('charCode'), 
+            $request->request->get('name'), 
+            $request->request->get('value'), 
+            $request->request->get('date')
+        );
 
         if ($currency instanceof Currency) {
             $currency = $this->currencyNormalizer->normalize($currency);
@@ -73,8 +74,24 @@ class CurrencyController extends AbstractController
         return new JsonResponse(false);
     }
 
-    #[Route('/delete/id={id<\d+>}', name: 'delete')]
-    public function deleteExchangeRateById(int $id): JsonResponse
+    #[Route('/update/{id<\d+>}', name: 'update', methods: ['PUT'])]
+    public function updateCurrencyById(Request $request, int $id): JsonResponse
+    {
+        $result = $this->currencyService->update(
+            $id,
+            $request->request->get('valuteId'), 
+            $request->request->get('numCode'), 
+            $request->request->get('charCode'), 
+            $request->request->get('name'), 
+            $request->request->get('value'), 
+            $request->request->get('date')
+        );
+
+        return new JsonResponse($result);
+    }
+
+    #[Route('/delete/{id<\d+>}', name: 'delete', methods: ['DELETE'])]
+    public function deleteCurrencyById(int $id): JsonResponse
     {
         $result = $this->currencyService->delete($id);
 

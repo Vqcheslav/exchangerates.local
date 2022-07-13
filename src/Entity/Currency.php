@@ -16,7 +16,7 @@ class Currency
     #[ORM\Column(type: 'string', length: 255)]
     private $valuteID;
 
-    #[ORM\Column(type: 'smallint')]
+    #[ORM\Column(type: 'string', length: 255)]
     private $numCode;
 
     #[ORM\Column(type: 'string', length: 255)]
@@ -48,12 +48,12 @@ class Currency
         return $this;
     }
 
-    public function getNumCode(): ?int
+    public function getNumCode(): ?string
     {
         return $this->numCode;
     }
 
-    public function setNumCode(int $numCode): self
+    public function setNumCode(string $numCode): self
     {
         $this->numCode = $numCode;
 

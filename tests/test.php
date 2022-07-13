@@ -68,3 +68,15 @@ $dategg = explode('/', $date);
 
 echo $timestamp = mktime(0, 0, 0, $dategg[1], $dategg[0], $dategg[2]) . '   ';
 echo (new \DateTime($date))->format('d-m-Y'); */
+
+
+//valuteid={valuteId<R\d{5}>}&numcode={numCode<\d{3}>}&charcode={charCode<[[:alpha:]]+>}&name={name<\w+.+\w+>}&value={value<\d+\.\d+>}&date={date<\d{4}-\d{2}-\d{2}>}
+// if (
+//     preg_match('/(R\d{5})&(\d{3})&([[:alpha:]]+)&(\w+.+\w+)&(\d+\.\d+)&(\d{4}-\d{2}-\d{2})/', 
+//         implode('&', ['R02323', '032', 'aud', '1 dollar', '223.3444', '2022-12-23'])) === 1) {
+//     echo 'true';
+// }
+
+// echo implode('&', ['R02323', '032', 'aud', '1 dollar', '223.3444', '2022-12-23']);
+
+echo date('d-m-Y', 1655240400);
