@@ -54,7 +54,7 @@ class CurrencyController extends AbstractController
     }
 
     #[Route('/set/valuteid={valuteId<R\d{5}>}&numcode={numCode<\d{3}>}&charcode={charCode<[[:alpha:]]+>}&name={name<\w+.+\w+>}&value={value<\d+\.\d+>}&date={date<\d{4}-\d{2}-\d{2}>}', name: 'set')]
-    public function setExchangeRate( //
+    public function setExchangeRate(
         string $valuteId,
         int $numCode,
         string $charCode,
@@ -70,6 +70,14 @@ class CurrencyController extends AbstractController
             return new JsonResponse($currency);
         }
 
-        return new JsonResponse(false);  //  "$valuteId  $numCode  $charCode  $name $value $date");
+        return new JsonResponse(false);
+    }
+
+    #[Route('/delete/id={id<\d+>}', name: 'delete')]
+    public function deleteExchangeRateById(int $id): JsonResponse
+    {
+        $result = $this->currencyService->delete($id);
+
+        return new JsonResponse($result);
     }
 }

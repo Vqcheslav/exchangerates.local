@@ -109,6 +109,19 @@ class CurrencyService
         return $currency;
     }
 
+    public function delete(int $id): bool
+    {
+        $currency = $this->currencyRepository->find($id);
+
+        if ($currency instanceof Currency){
+            $this->currencyRepository->remove($currency, true);
+
+            return true;
+        }
+
+        return false;
+    }
+
     public function getExchangeRatesByPeriod(string $dateFrom, string $dateTo, string $valuteId): ?array
     {
         $timeFrom = strtotime($dateFrom);
