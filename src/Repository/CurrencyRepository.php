@@ -60,11 +60,28 @@ class CurrencyRepository extends ServiceEntityRepository
     public function getExchangeRatesByDate(int $timestamp): ?array
     {
         return $this->createQueryBuilder('c')
-            ->select('c')
             ->where('c.date <= :timestamp')
             ->orderBy('c.date', 'DESC')
             ->setParameter('timestamp', $timestamp)
             ->setMaxResults(34)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    /**
+     * @return Currency[] array of Currencies
+     */
+    public function getExchangeRatesByPeriod(int $timeFrom, int $timeTo, string $valuteId): ?array
+    {
+        return $this->createQueryBuilder('c')
+            ->where('c.valuteID = :valuteid')
+            ->andWhere('c.date >= :timefrom')
+            ->andWhere('c.date <= :timeto')
+            ->orderBy('c.date', 'DESC')
+            ->setParameter(':valuteid', $valuteId)
+            ->setParameter(':timefrom', $timeFrom)
+            ->setParameter(':timeto', $timeTo)
             ->getQuery()
             ->getResult()
         ;

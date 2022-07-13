@@ -84,15 +84,41 @@ class CurrencyService
 
     public function getExchangeRatesByDate(string $date): ?array
     {
-        $date = explode('-', $date);
-
-        $timestamp = mktime(0, 0, 0, $date[1], $date[2], $date[0]);
-
-        if ($timestamp === false || $timestamp > time()) {
+        $timestamp = strtotime($date);
+        
+        if (! $timestamp) {
             return null;
         }
 
         $rates = $this->currencyRepository->getExchangeRatesByDate($timestamp);
+
+        return $rates;
+    }
+
+    public function save(string $valuteId, int $numCode, string $charCode, string $name, float $value, string $date): Currency
+    {
+        $currency = (new Currency)
+            ->setValuteID($valuteId)
+            ->setNumCode($numCode)
+            ->setCharCode($charCode)
+            ->setName($name)
+            ->setValue($value)
+            ->setDate(strtotime($date));
+        $this->currencyRepository->save($currency, true);
+
+        return $currency;
+    }
+
+    public function getExchangeRatesByPeriod(string $dateFrom, string $dateTo, string $valuteId): ?array
+    {
+        $timeFrom = strtotime($dateFrom);
+        $timeTo   = strtotime($dateTo);
+        
+        if (! $timeFrom || ! $timeTo) {
+            return null;
+        }
+        
+        $rates = $this->currencyRepository->getExchangeRatesByPeriod($timeFrom, $timeTo, $valuteId);
 
         return $rates;
     }

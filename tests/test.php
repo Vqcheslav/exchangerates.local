@@ -62,9 +62,9 @@
 // echo /* iconv('UTF-8', 'Windows-1251',  */'1 РђРІСЃС‚СЂР°Р»РёР№СЃРєРёР№ РґРѕР»Р»Р°СЂ'/* ) */;
 
 // echo strtotime('19.06.2022');
-$date = '19/06/2022';
+/* $date = '19/06/2022';
 
 $dategg = explode('/', $date);
 
 echo $timestamp = mktime(0, 0, 0, $dategg[1], $dategg[0], $dategg[2]) . '   ';
-echo (new \DateTime($date))->format('d-m-Y');
+echo (new \DateTime($date))->format('d-m-Y'); */

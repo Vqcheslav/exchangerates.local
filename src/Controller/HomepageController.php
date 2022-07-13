@@ -49,7 +49,7 @@ class HomepageController extends AbstractController
 
         return $this->render('homepage.html.twig', [
             'currencies' => $currencies,
-            'dateToday'  => (new \DateTime())->format('d-m-Y'),
+            'dateToday'  => (new \DateTime())->format('Y-m-d'),
         ]);
     }
 
