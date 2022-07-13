@@ -73,5 +73,9 @@
                 <p class="text-center text-muted">&copy; 2022 Валютные курсы</p>
             </footer>
         </div>
+
+        {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
+        {% endblock %}
     </body>
 </html>
