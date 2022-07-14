@@ -25,11 +25,11 @@ class CurrencyNormalizer
         return $data;
     }
 
-    public function normalizeArrayOfCurrencies(array $currencies, bool $showErrors = false): array
+    public function normalizeArrayOfcurrencyList(array $currencyList, bool $showErrors = false): array
     {
         $data = [];
 
-        foreach ($currencies as $currency) {
+        foreach ($currencyList as $currency) {
             if ($showErrors || $currency instanceof Currency) {
                 $data[] = $this->normalize($currency);
             }

@@ -39,6 +39,16 @@ class CurrencyRepository extends ServiceEntityRepository
         }
     }
 
+    public function getCurrencyById(int $id)
+    {
+        return $this
+            ->createQueryBuilder('c')
+            ->where('c.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     public function getLastCurrency(): ?Currency
     {
         return $this
@@ -57,23 +67,21 @@ class CurrencyRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return Currency[] array of Currencies
+     * @return Currency[] array of currencyList
      */
     public function getCurrencyListByDate(int $timestamp): ?array
     {
         return $this
             ->createQueryBuilder('c')
-            ->where('c.date <= :timestamp')
-            ->orderBy('c.date', 'DESC')
+            ->where('c.date IN (SELECT MAX(c2.date) FROM App\Entity\Currency c2 WHERE c2.date <= :timestamp)')
+            ->orderBy('c.charCode', 'ASC')
             ->setParameter('timestamp', $timestamp)
-            ->groupBy('c.charCode')
-            //->setMaxResults(34)
             ->getQuery()
             ->getResult();
     }
 
     /**
-     * @return Currency[] array of Currencies
+     * @return Currency[] array of currencyList
      */
     public function getCurrencyListByPeriod(int $timeFrom, int $timeTo, string $valuteId): ?array
     {

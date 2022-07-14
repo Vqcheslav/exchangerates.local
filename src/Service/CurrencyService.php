@@ -123,14 +123,8 @@ class CurrencyService
         return $rates;
     }
 
-    public function save(
-        string $valuteId, 
-        string $numCode, 
-        string $charCode, 
-        string $name, 
-        float $value, 
-        string $date
-    ): ?Currency {
+    public function save($valuteId, $numCode, $charCode, $name, $value, $date): ?Currency 
+    {
         if (! $this->checkArgsForCurrency($valuteId, $numCode, $charCode, $name, $value, $date)) {
             return null;
         }
@@ -149,25 +143,18 @@ class CurrencyService
         return $currency;
     }
 
-    public function update(
-        int $id,
-        string $valuteId, 
-        string $numCode, 
-        string $charCode, 
-        string $name, 
-        float $value, 
-        string $date
-    ) {
+    public function put(int $id, $valuteId, $numCode, $charCode, $name, $value, $date): ?Currency
+    {
         if (! $this->checkArgsForCurrency($valuteId, $numCode, $charCode, $name, $value, $date)) {
             return null;
         }
 
         $currency = $this
             ->currencyRepository
-            ->find($id);
+            ->getCurrencyById($id);
         
         if (! ($currency instanceof Currency)) {
-            return null;
+            $currency = (new Currency());
         }
 
         $currency
@@ -188,9 +175,9 @@ class CurrencyService
     {
         $currency = $this
             ->currencyRepository
-            ->find($id);
+            ->getCurrencyById($id);
 
-        if ($currency instanceof Currency){
+        if ($currency instanceof Currency) {
             $this
                 ->currencyRepository
                 ->remove($currency);
@@ -201,16 +188,23 @@ class CurrencyService
         return false;
     }
 
-    private function checkArgsForCurrency(
-        string $valuteId, 
-        string $numCode, 
-        string $charCode, 
-        string $name, 
-        float $value, 
-        string $date
-    ) {
+    public function checkArgsForCurrency(
+        $valuteId, 
+        $numCode, 
+        $charCode, 
+        $name, 
+        $value, 
+        $date
+    ): bool {
         $reg         = '/(R\w{5,6})&(\d{3})&([[:alpha:]]+)&(\w+.+\w+)&(\d+\.\d+)&(\d{4}-\d{2}-\d{2})/';
-        $arrayOfArgs = [$valuteId, $numCode, $charCode, $name, $value, $date];
+        $arrayOfArgs = [
+            $valuteId, 
+            $numCode, 
+            $charCode, 
+            $name, 
+            $value, 
+            $date
+        ];
 
         if (preg_match($reg, implode('&', $arrayOfArgs)) === 1) {
             return true;

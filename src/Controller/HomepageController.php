@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
 use App\Service\UserService;
 use App\Service\CurrencyService;
 use App\Form\RegistrationFormType;
@@ -40,16 +39,19 @@ class HomepageController extends AbstractController
     public function homepage(Request $request): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
-        $currencies = [];
+        $currencyList = [];
         $date = $request->query->get('date');
+        $dateToday = (new \DateTime())->format('Y-m-d');
 
-        if ($date !== null) {
-            $currencies = $this->currencyService->getCurrencyListByDate($date);
+        if ($date === null || $date === '') {
+            $date = $dateToday;
         }
 
+        $currencyList = $this->currencyService->getCurrencyListByDate($date);
+
         return $this->render('homepage.html.twig', [
-            'currencies' => $currencies,
-            'dateToday'  => (new \DateTime())->format('Y-m-d'),
+            'currencyList' => $currencyList,
+            'dateToday'    => $dateToday,
         ]);
     }
 

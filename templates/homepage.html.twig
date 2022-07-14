@@ -12,8 +12,8 @@
         </div>
     </form>
 
-    {% if currencies %}
-    <div style='overflow-x: auto;'>
+    {% if currencyList %}
+    <div style='overflow-x: auto; margin-top: 2rem;'>
     <table class="table table-hover">
         <thead>
             <tr>
@@ -26,7 +26,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for currency in currencies %}
+            {% for currency in currencyList %}
                 <tr>
                     <th scope="row">{{ currency.valuteId }}</th>
                     <td>{{ currency.numCode }}</td>

@@ -63,7 +63,10 @@ class LoginFormType extends AbstractType
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Войти',
-                'attr' => ['class' => "btn btn-primary btn-block btn-user-registration"]
+                'attr' => [
+                    'class' => "btn btn-primary btn-block btn-user-registration",
+                    'style' => 'float: right;'
+                ]
             ])
         ;
     }

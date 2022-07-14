@@ -20,11 +20,8 @@ class UserService
         $this->userPasswordHasher = $userPasswordHasher;
     }
 
-    public function register(
-        string $email,
-        string $password,
-        bool $flush = true
-    ): User {
+    public function register(string $email, string $password, bool $flush = true): User 
+    {
         $user = new User();
         $user
             ->setEmail($email)
@@ -35,7 +32,7 @@ class UserService
             );
         $this
             ->userRepository
-            ->add($user, $flush);
+            ->save($user, $flush);
         
         return $user;
     }

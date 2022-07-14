@@ -3,7 +3,7 @@
 {% block title %}Вход{% endblock %}
 
 {% block container %}
-<div id="login">
+<div id="login" {# style='max-width: 500px; margin: auto;' #}>
     <h1 class="h3 mb-3 font-weight-normal" style="text-align: center; margin-top: 3rem;">Вход</h1>
 
     {{ form_start(form) }}
@@ -22,7 +22,7 @@
 
     {{ form_end(form) }}
 
-    <a class="btn btn-primary btn-block btn-user-registration" href='{{ path('register') }}'>
+    <a class="btn btn-primary btn-block btn-user-registration" style='float: left;' href='{{ path('register') }}'>
         Создать аккаунт
     </a>
 </div>
