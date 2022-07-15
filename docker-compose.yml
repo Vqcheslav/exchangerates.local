@@ -13,14 +13,6 @@ services:
             MYSQL_USER: exchange_user
             MYSQL_PASSWORD: exchange_Pass
 
-    mailer:
-        image: schickling/mailcatcher
-        ports: [1025, 1080]
-
     redis:
         image: redis:5-alpine
         ports: [6379]
-
-    rabbitmq:
-        image: rabbitmq:3.7-management
-        ports: [5672, 15672]
