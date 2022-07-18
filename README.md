@@ -4,7 +4,7 @@
 
   1) Необходимо предварительно установить:
     1.1) PHP 8.1:  https://www.php.net/manual/ru/install.php
-    1.2) Symfony:  https://symfony.com/doc/current/setup.html
+    1.2) Symfony:  https://symfony.com/download
     1.3) Docker:  https://docs.docker.com/desktop/install/linux-install/  
     1.4) Docker-Compose: https://docs.docker.com/compose/install/
     1.5) Composer: https://getcomposer.org/download/
