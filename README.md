@@ -3,12 +3,12 @@
 ### Инструкция по установке проекта на Linux:
 
 - Необходимо предварительно установить:
-   -- PHP 8.1:  https://www.php.net/manual/ru/install.php
-   -- Symfony:  https://symfony.com/download
-   -- Docker:  https://docs.docker.com/desktop/install/linux-install/  
-   -- Docker-Compose: https://docs.docker.com/compose/install/
-   -- Composer: https://getcomposer.org/download/
-   -- Yarn: https://classic.yarnpkg.com/lang/en/docs/install/
+   1) PHP 8.1:  https://www.php.net/manual/ru/install.php
+   2) Symfony:  https://symfony.com/download
+   3) Docker:  https://docs.docker.com/desktop/install/linux-install/  
+   4) Docker-Compose: https://docs.docker.com/compose/install/
+   5) Composer: https://getcomposer.org/download/
+   6) Yarn: https://classic.yarnpkg.com/lang/en/docs/install/
 - Скачать zip-архив проекта по ссылке https://github.com/QueflyQuefly/exchangerates.local/archive/refs/heads/main.zip 
   (можно также воспользоваться командой ' git clone https://github.com/QueflyQuefly/exchangerates.local.git ')
   и разархивировать проект в любую директорию на локальном диске
