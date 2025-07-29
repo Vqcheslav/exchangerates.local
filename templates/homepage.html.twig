@@ -1,47 +1,56 @@
-{% extends 'base.html.twig' %}
+{% extends "base.html.twig" %}
 
 {% block container %}
 
-    <h1 class='display-6' style='margin-top: 2rem;'>Валютные курсы по данным банка России</h1>
+    <h1 class="display-6 mt-3">Валютные курсы по данным банка России</h1>
 
-    <form action='/' method='get'>
-        <div class="input-group mb-3" style='margin-top: 2rem;'>
-            <span class="input-group-text" id="inputGroup-sizing-default">Введите дату</span>
-            <input type="date" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" name='date'>
-            <input class="btn btn-outline-secondary" type="submit" value='Отправить'>
+    <form action="/" method="get">
+        <div class="input-group mb-3 mt-3">
+            <span class="input-group-text" id="searchInputLabel">Введите дату</span>
+            <input
+                type="date"
+                class="form-control"
+                aria-label="Search input"
+                aria-describedby="searchInputLabel"
+                name="date"
+                value="{{ date }}"
+            >
+            <input class="btn btn-outline-secondary" type="submit" value="Получить">
         </div>
     </form>
 
     {% if currencyList %}
-    <div style='overflow-x: auto; margin-top: 2rem;'>
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Номер</th>
-                <th scope="col">Код</th>
-                <th scope="col">Наименование</th>
-                <th scope="col">Значение</th>
-                <th scope="col">Дата изменения</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for currency in currencyList %}
+        <div class="mt-3 overflow-x-auto">
+            <table class="table table-hover">
+                <thead>
                 <tr>
-                    <th scope="row">{{ currency.valuteId }}</th>
-                    <td>{{ currency.numCode }}</td>
-                    <td scope="row">{{ currency.charCode }}</td>
-                    <td>{{ currency.name }}</td>
-                    <td>{{ currency.value }}</td>
-                    <td>{{ currency.date|date('d/m/Y') }}</td>
+                    <th scope="col">#</th>
+                    <th scope="col">Номер</th>
+                    <th scope="col">Код</th>
+                    <th scope="col">Наименование</th>
+                    <th scope="col">Значение</th>
+                    <th scope="col">Дата изменения</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    </div>
+                </thead>
+                <tbody>
+                {% for currency in currencyList %}
+                    <tr>
+                        <th>{{ currency.valuteId }}</th>
+                        <td>{{ currency.numCode }}</td>
+                        <td>{{ currency.charCode }}</td>
+                        <td>{{ currency.name }}</td>
+                        <td>{{ currency.value }}</td>
+                        <td>{{ currency.date|date("d/m/Y") }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     {% else %}
-        <h6 style='margin-top: 6rem; text-align: center;'>Нет данных за указанную дату. Пожалуйста, введите верные данные, либо нажмите в меню 'Заполнить базу данных'</h6>
-        <a class='btn btn-primary btn-block' style='margin-top: 2rem; float: right;' href='/?date={{ dateToday }}'>
+        <h6 class="text-center mt-5">
+            Нет данных за указанную дату. Пожалуйста, введите верные данные, либо нажмите в меню "Заполнить базу данных"
+        </h6>
+        <a class="btn btn-primary btn-block text-end mt-3" href="/?date={{ dateToday }}">
             Показать курсы за сегодня
         </a>
     {% endif %}

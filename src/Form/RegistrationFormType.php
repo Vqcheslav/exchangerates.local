@@ -5,7 +5,6 @@ namespace App\Form;
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -21,14 +20,14 @@ class RegistrationFormType extends AbstractType
     {
         $builder
             ->add('email', EmailType::class, [
-                'label' => 'Ваша почта:',
-                'attr'  => [
+                'label'       => 'Ваша почта:',
+                'attr'        => [
                     'class'       => 'formtext',
                     'placeholder' => 'Введите email',
                     'autofocus'   => 'on',
                     'minlength'   => '1',
                     'maxlength'   => '40',
-                    'value'       => $options['email']
+                    'value'       => $options['email'],
                 ],
                 'constraints' => [
                     new NotBlank([
@@ -39,13 +38,13 @@ class RegistrationFormType extends AbstractType
                         'minMessage' => 'Необходимо ввести не менее {{ limit }} знаков',
                         'max'        => 50,
                         'maxMessage' => 'Необходимо ввести не более {{ limit }} знаков',
-                    ])
-                ]
+                    ]),
+                ],
             ])
             ->add('plainPassword', PasswordType::class, [
-                'label'  => 'Придумайте надёжный пароль:',
-                'mapped' => false,
-                'attr'   => [
+                'label'       => 'Придумайте надёжный пароль:',
+                'mapped'      => false,
+                'attr'        => [
                     'class'        => 'formtext',
                     'placeholder'  => 'Введите пароль',
                     'autocomplete' => 'new-password',
@@ -75,9 +74,8 @@ class RegistrationFormType extends AbstractType
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Создать аккаунт',
-                'attr'  => ['class' => "btn btn-primary btn-block btn-user-registration"]
-            ])
-        ;
+                'attr'  => ['class' => "btn btn-primary btn-block btn-user-registration"],
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

@@ -1,98 +1,116 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="msapplication-tap-highlight" content="no" />
-        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="msapplication-tap-highlight" content="no"/>
+    <meta name="viewport"
+          content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width"/>
 
-        <title>{% block title %}Валютные курсы{% endblock %}</title>
-        <link rel="icon" href="{{ asset('favicon.png') }}">
-
-        {% block stylesheets %}
-            {{ encore_entry_link_tags('app') }}
-        {% endblock %}
-    </head>
-    <body>
-        <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="{{ path('homepage') }}">
-                    <img src="{{ asset('favicon.png') }}" alt="" width="30" height="30" class="d-inline-block align-text-top">
-                    Валютные курсы
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            {% if is_granted('ROLE_USER') %}
-                                <a class="nav-link" aria-current="page" href="{{ path('logout') }}">Выйти</a>
-                            {% else %}
-                                <a class="nav-link" aria-current="page" href="{{ path('login') }}">Войти</a>
-                            {% endif %}
-                        </li>
-                        <li class="nav-item">
-                            {% if is_granted('ROLE_USER') %}
-                                <a class="nav-link" aria-current="page" href="{{ path('populateTheDb') }}">Заполнить базу данных</a>
-                            {% else %}
-                                <a class="nav-link disabled">Заполнить БД</a>
-                            {% endif %}
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                API
+    <title>{% block title %}Валютные курсы{% endblock %}</title>
+    <link rel="icon" href="{{ asset("favicon.png") }}">
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
+        crossorigin="anonymous"
+    >
+</head>
+<body>
+<nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{{ path("homepage") }}">
+            <img src="{{ asset("favicon.png") }}" alt="" width="30" height="30" class="d-inline-block align-text-top">
+            Валютные курсы
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    {% if is_granted("ROLE_USER") %}
+                        <a class="nav-link" aria-current="page" href="{{ path("logout") }}">Выйти</a>
+                    {% else %}
+                        <a class="nav-link" aria-current="page" href="{{ path("login") }}">Войти</a>
+                    {% endif %}
+                </li>
+                <li class="nav-item">
+                    {% if is_granted("ROLE_USER") %}
+                        <a class="nav-link" aria-current="page" href="{{ path("populateTheDb") }}">Заполнить базу
+                            данных</a>
+                    {% else %}
+                        <a class="nav-link disabled">Заполнить БД</a>
+                    {% endif %}
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        API
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li>
+                            <a
+                                class="dropdown-item"
+                                href="{{ path("api_currency_by_period", {"dateFrom": date('-1 month')|date('Y-m-d'), "dateTo": date('now')|date('Y-m-d'), "valuteId": "R01010"}) }}"
+                            >
+                                Курсы AUD за период {{ date('-1 month')|date('Y-m-d') }} по
+                                {{ date('now')|date('Y-m-d') }}
                             </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li>
-                                    <a class="dropdown-item" href="{{ path('api_currency_by_period', {'dateFrom': '2022-06-13', 'dateTo': '2022-07-13', 'valuteId': 'R01010'}) }}">
-                                        Курсы валют за период 2022-06-13 по 2022-07-13
-                                    </a>
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <a class="dropdown-item" href="{{ path('api_currency_by_date', {'date': '2022-07-13'}) }}">
-                                        Курсы валют за 2022-07-13
-                                    </a>
-                                </li>
-                            </ul>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <a
+                                class="dropdown-item"
+                                href="{{ path("api_currency_by_date", {"date": date('-2 days')|date('Y-m-d')}) }}"
+                            >
+                                Курсы валют за {{ date('-2 days')|date('Y-m-d') }}
+                            </a>
                         </li>
                     </ul>
-                </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container" style="min-height: 100vh; max-width: 900px;">
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="mt-5 mb-3">
+                <p class="{{ label }}">{{ message }}</p>
             </div>
-        </nav>
+        {% endfor %}
+    {% endfor %}
 
-        <div class="container" style="min-height: 100vh; max-width: 900px;">
-            {% for label, messages in app.flashes %}
-                {% for message in messages %}
-                <div style='margin-top: 6vmin; margin-bottom: 2vmin;'>
-                    <p class='{{ label }}'>{{ message }}</p>
-                </div>
-                {% endfor %}
-            {% endfor %}
+    {% block container %}
+        <h1 class="display-6 mt-5">Это базовая страница</h1>
+    {% endblock %}
+</div>
 
-            {% block container %}
-                <h1 class='display-6' style='margin-top: 3rem;'>Это базовая страница</h1>
-            {% endblock %}
-        </div>
-        
-        <div class="container">
-            <footer class="py-3 my-4">
-                <ul class="nav justify-content-center border-bottom pb-3 mb-3">
-                    <li class="nav-item"><a href="{{ path('homepage') }}" class="nav-link px-2 text-muted">На главную</a></li>
-                    {% if is_granted('ROLE_USER') %}
-                        <li class="nav-item"><a href="{{ path('logout') }}" class="nav-link px-2 text-muted">Выйти</a></li>
-                    {% else %}
-                        <li class="nav-item"><a href="{{ path('login') }}" class="nav-link px-2 text-muted">Войти</a></li>
-                    {% endif %}
-                </ul>
-                <p class="text-center text-muted">&copy; 2022 Валютные курсы</p>
-            </footer>
-        </div>
+<div class="container">
+    <footer class="py-3 my-4">
+        <ul class="nav justify-content-center border-bottom pb-3 mb-3">
+            <li class="nav-item"><a href="{{ path("homepage") }}" class="nav-link px-2 text-muted">На главную</a></li>
+            {% if is_granted("ROLE_USER") %}
+                <li class="nav-item"><a href="{{ path("logout") }}" class="nav-link px-2 text-muted">Выйти</a></li>
+            {% else %}
+                <li class="nav-item"><a href="{{ path("login") }}" class="nav-link px-2 text-muted">Войти</a></li>
+            {% endif %}
+        </ul>
+        <p class="text-center text-muted">&copy; 2022 Валютные курсы</p>
+    </footer>
+</div>
 
-        {% block javascripts %}
-            {{ encore_entry_script_tags('app') }}
-        {% endblock %}
-    </body>
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+    crossorigin="anonymous"
+></script>
+
+</body>
 </html>

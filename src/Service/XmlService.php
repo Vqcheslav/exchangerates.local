@@ -2,6 +2,8 @@
 
 namespace App\Service;
 
+use Exception;
+
 class XmlService
 {
     public function isXml(string $xmlString): bool
@@ -23,12 +25,12 @@ class XmlService
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function getXmlElement(string $data)
     {
         if (! $this->isXml($data)) {
-            throw new \Exception('Invalid XML');
+            throw new Exception('Invalid XML');
         }
 
         return new \SimpleXMLElement($data);

@@ -8,32 +8,20 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserService
 {
-    private UserRepository $userRepository;
-
-    private UserPasswordHasherInterface $userPasswordHasher;
-
     public function __construct(
-        UserRepository $userRepository,
-        UserPasswordHasherInterface $userPasswordHasher
+        private readonly UserRepository $userRepository,
+        private readonly UserPasswordHasherInterface $userPasswordHasher,
     ) {
-        $this->userRepository     = $userRepository;
-        $this->userPasswordHasher = $userPasswordHasher;
     }
 
-    public function register(string $email, string $password, bool $flush = true): User 
+    public function register(string $email, string $password, bool $flush = true): User
     {
         $user = new User();
         $user
             ->setEmail($email)
-            ->setPassword(
-                $this
-                    ->userPasswordHasher
-                    ->hashPassword($user, $password)
-            );
-        $this
-            ->userRepository
-            ->save($user, $flush);
-        
+            ->setPassword($this->userPasswordHasher->hashPassword($user, $password),);
+        $this->userRepository->save($user, $flush);
+
         return $user;
     }
 }

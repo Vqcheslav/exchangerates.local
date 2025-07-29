@@ -1,19 +1,21 @@
-{% extends 'base.html.twig' %}
+{% extends "base.html.twig" %}
 
 {% block title %}Регистрация{% endblock %}
 
 {% block container %}
-<div id="register">
-    <h1 class="h3 mb-3 font-weight-normal" style="text-align: center; margin-top: 3rem;">Регистрация</h1>
+    <div id="register">
+        <h1 class="h3 mb-3 font-weight-normal text-center mt-5">
+            Регистрация
+        </h1>
 
-    {{ form_start(form) }}
+        {{ form_start(form) }}
         {{ form_row(form.email) }}
         {{ form_row(form.plainPassword) }}
         {{ form_row(form.agreeTerms) }}
 
         {{ form_row(form._token) }}
-        <br> 
+
         {{ form_row(form.submit) }}
-    {{ form_end(form) }}   
-</div>
+        {{ form_end(form) }}
+    </div>
 {% endblock %}

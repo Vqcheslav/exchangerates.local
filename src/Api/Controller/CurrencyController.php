@@ -13,29 +13,18 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/currency', name: 'api_currency_')]
 class CurrencyController extends AbstractController
 {
-    private CurrencyService $currencyService;
-
-    private CurrencyNormalizer $currencyNormalizer;
-
     public function __construct(
-        CurrencyService $currencyService,
-        CurrencyNormalizer $currencyNormalizer
-    ) {
-        $this->currencyService    = $currencyService;
-        $this->currencyNormalizer = $currencyNormalizer;
-    }
+        private readonly CurrencyService $currencyService,
+        private readonly CurrencyNormalizer $currencyNormalizer,
+    ) {}
 
     #[Route('/daily/date={date<\d{4}-\d{2}-\d{2}>}', name: 'by_date', methods: ['GET'])]
     public function getCurrencyListByDate(string $date): JsonResponse
     {
-        $currencyList = $this
-            ->currencyService
-            ->getCurrencyListByDate($date);
+        $currencyList = $this->currencyService->getCurrencyListByDate($date);
 
         try {
-            $currencyList = $this
-                ->currencyNormalizer
-                ->normalizeArrayOfcurrencyList($currencyList, true);
+            $currencyList = $this->currencyNormalizer->normalizeArrayOfCurrencyList($currencyList, true);
         } catch (\Exception) {
             return new JsonResponse('Invalid request', 404);
         }
@@ -46,14 +35,10 @@ class CurrencyController extends AbstractController
     #[Route('/period/date_from={dateFrom<\d{4}-\d{2}-\d{2}>}&date_to={dateTo<\d{4}-\d{2}-\d{2}>}&valute_id={valuteId<R\w{5,6}>}', name: 'by_period', methods: ['GET'])]
     public function getCurrencyListByPeriod(string $dateFrom, string $dateTo, string $valuteId): JsonResponse
     {
-        $currencyList = $this
-            ->currencyService
-            ->getCurrencyListByPeriod($dateFrom, $dateTo, $valuteId);
+        $currencyList = $this->currencyService->getCurrencyListByPeriod($dateFrom, $dateTo, $valuteId);
 
         try {
-            $currencyList = $this
-                ->currencyNormalizer
-                ->normalizeArrayOfcurrencyList($currencyList, true);
+            $currencyList = $this->currencyNormalizer->normalizeArrayOfCurrencyList($currencyList, true);
         } catch (\Exception) {
             return new JsonResponse('Invalid request', 404);
         }
@@ -62,7 +47,7 @@ class CurrencyController extends AbstractController
     }
 
     #[Route('/set', name: 'set', methods: ['POST'])]
-    public function setCurrency(Request $request): JsonResponse 
+    public function setCurrency(Request $request): JsonResponse
     {
         $currency = $this->currencyService->save(
             $request->request->get('valute_id'),
@@ -70,13 +55,11 @@ class CurrencyController extends AbstractController
             $request->request->get('char_code'),
             $request->request->get('name'),
             $request->request->get('value'),
-            $request->request->get('date')
+            $request->request->get('date'),
         );
 
         if ($currency instanceof Currency) {
-            $currency = $this
-                ->currencyNormalizer
-                ->normalize($currency);
+            $currency = $this->currencyNormalizer->normalize($currency);
 
             return new JsonResponse($currency, 200);
         }
@@ -94,13 +77,11 @@ class CurrencyController extends AbstractController
             $request->request->get('char_code'),
             $request->request->get('name'),
             $request->request->get('value'),
-            $request->request->get('date')
+            $request->request->get('date'),
         );
 
         if ($currency instanceof Currency) {
-            $currency = $this
-                ->currencyNormalizer
-                ->normalize($currency);
+            $currency = $this->currencyNormalizer->normalize($currency);
 
             if ($currency['id'] === $id) {
                 return new JsonResponse($currency, 200);
@@ -115,9 +96,7 @@ class CurrencyController extends AbstractController
     #[Route('/delete/{id<\d+>}', name: 'delete', methods: ['DELETE'])]
     public function deleteCurrencyById(int $id): JsonResponse
     {
-        $result = $this
-            ->currencyService
-            ->delete($id);
+        $result = $this->currencyService->delete($id);
 
         if ($result) {
             return new JsonResponse('File deleted', 200);

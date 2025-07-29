@@ -3,13 +3,17 @@
 namespace App\Normalizer;
 
 use App\Entity\Currency;
+use Exception;
 
 class CurrencyNormalizer
 {
+    /**
+     * @throws \Exception
+     */
     public function normalize($currency): array
     {
-        if (! $this->supportsNormalization($currency)) {
-            throw new \Exception('It is not a Currency object. Normalization is does not supported');
+        if ( ! $this->supportsNormalization($currency)) {
+            throw new Exception('It is not a Currency object. Normalization is does not supported');
         }
 
         $data = [
@@ -25,7 +29,7 @@ class CurrencyNormalizer
         return $data;
     }
 
-    public function normalizeArrayOfcurrencyList(array $currencyList, bool $showErrors = false): array
+    public function normalizeArrayOfCurrencyList(array $currencyList, bool $showErrors = false): array
     {
         $data = [];
 

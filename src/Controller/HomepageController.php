@@ -6,6 +6,8 @@ use App\Service\UserService;
 use App\Service\CurrencyService;
 use App\Form\RegistrationFormType;
 use App\Form\LoginFormType;
+use DateTime;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,33 +17,19 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class HomepageController extends AbstractController
 {
-    private AuthenticationUtils $authenticationUtils;
-
-    private UserService $userService;
-
-    private CurrencyService $currencyService;
-
-    private FormFactoryInterface $formFactory;
-
     public function __construct(
-        AuthenticationUtils   $authenticationUtils,
-        UserService           $userService,
-        CurrencyService       $currencyService,
-        FormFactoryInterface  $formFactory
-    ) {
-        $this->authenticationUtils = $authenticationUtils;
-        $this->userService         = $userService;
-        $this->currencyService     = $currencyService;
-        $this->formFactory         = $formFactory;
-    }
+        private readonly AuthenticationUtils $authenticationUtils,
+        private readonly UserService $userService,
+        private readonly CurrencyService $currencyService,
+        private readonly FormFactoryInterface $formFactory,
+    ) {}
 
     #[Route('/', name: 'homepage')]
     public function homepage(Request $request): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
-        $currencyList = [];
         $date = $request->query->get('date');
-        $dateToday = (new \DateTime())->format('Y-m-d');
+        $dateToday = (new DateTime())->format('Y-m-d');
 
         if ($date === null || $date === '') {
             $date = $dateToday;
@@ -52,6 +40,7 @@ class HomepageController extends AbstractController
         return $this->render('homepage.html.twig', [
             'currencyList' => $currencyList,
             'dateToday'    => $dateToday,
+            'date'         => $date,
         ]);
     }
 
@@ -68,7 +57,7 @@ class HomepageController extends AbstractController
 
         return $this->renderForm('user/user_login.html.twig', [
             'form'  => $form,
-            'error' => $error
+            'error' => $error,
         ]);
     }
 
@@ -79,23 +68,14 @@ class HomepageController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $email = $form
-                ->get('email')
-                ->getData();
-            $password = $form
-                ->get('plainPassword')
-                ->getData();
-
-            $this
-                ->userService
-                ->register($email, $password);
+            $email = $form->get('email')->getData();
+            $password = $form->get('plainPassword')->getData();
+            $this->userService->register($email, $password);
 
             return $this->redirectToRoute('login');
         }
 
-        return $this->renderForm('user/user_register.html.twig', [
-            'form' => $form
-        ]);
+        return $this->renderForm('user/user_register.html.twig', ['form' => $form]);
     }
 
     #[Route('/logout', name: 'logout')]
@@ -115,7 +95,7 @@ class HomepageController extends AbstractController
             } else {
                 $this->addFlash('success', 'База данных в актуальном состоянии');
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->addFlash('error', $e->getMessage());
         }
 
